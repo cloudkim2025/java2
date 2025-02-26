@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: feign-date
+    server:
+      port: 9983
