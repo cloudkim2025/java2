@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: feign-clint
+feign-data:
+  url: "http://localhost:9983"
+server:
+  port: 9981
