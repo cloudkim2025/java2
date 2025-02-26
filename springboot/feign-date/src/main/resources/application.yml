@@ -1,5 +1,5 @@
 spring:
   application:
-    name: feign-date
-    server:
-      port: 9983
+    name: feign-data
+server:
+  port: 9983
