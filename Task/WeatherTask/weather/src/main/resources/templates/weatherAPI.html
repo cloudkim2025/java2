@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>날씨 조회</title>
+    <link rel="stylesheet" href="/css/weatherAPI.css">
+</head>
+<body>
+<h1>날씨 조회</h1>
+
+<form action="/weather/search" method="get">
+    <label for="date">날짜 (YYYYMMDD):</label>
+    <input type="text" id="date" name="date" th:value="${date}" required><br><br>
+
+    <label for="time">시간 (HHMM):</label>
+    <input type="text" id="time" name="time" th:value="${time}" required><br><br>
+
+    <label for="nx">위치 X (경도):</label>
+    <input type="text" id="nx" name="nx" th:value="${nx}" required><br><br>
+
+    <label for="ny">위치 Y (위도):</label>
+    <input type="text" id="ny" name="ny" th:value="${ny}" required><br><br>
+
+    <button type="submit">날씨 조회</button>
+</form>
+
+<!--응답 데이터 표시 -->
+<h2>결과:</h2>
+<div th:if="${weather}">
+    <p><strong>날짜:</strong> <span th:text="${date}"></span></p>
+    <p><strong>시간:</strong> <span th:text="${time}"></span></p>
+    <p><strong>위치 X (nx):</strong> <span th:text="${nx}"></span></p>
+    <p><strong>위치 Y (ny):</strong> <span th:text="${ny}"></span></p>
+    <p><strong>온도:</strong> <span th:text="${weather}"></span>°C</p>
+</div>
+
+<!-- 오류 메시지 표시 -->
+<div th:if="${error}">
+    <p style="color: red;"><strong>오류:</strong> <span th:text="${error}"></span></p>
+</div>
+
+</body>
+</html>
