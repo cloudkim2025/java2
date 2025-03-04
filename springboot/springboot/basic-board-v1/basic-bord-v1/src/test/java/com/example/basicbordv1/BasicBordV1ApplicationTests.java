@@ -1,10 +1,10 @@
-package com.example.feignclint;
+package com.example.basicbordv1;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class FeignClintApplicationTests {
+class BasicBordV1ApplicationTests {
 
     @Test
     void contextLoads() {
