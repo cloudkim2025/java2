@@ -15,11 +15,13 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.crypto.SecretKey;
 import java.time.Duration;
 import java.util.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TokenProvider {
@@ -82,7 +84,7 @@ public class TokenProvider {
 
             return 1;
         } catch (ExpiredJwtException e) {
-            log.info("Token이 말료되었습니다.");
+            log.info("Token이 만료되었습니다.");
             return 2;
         }catch (Exception e) {
             //복호화 과정에서 에러가 나면 유효하지 않은 토큰
