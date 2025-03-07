@@ -14,40 +14,63 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-@Component
-@RequiredArgsConstructor
+/**
+ * ✅ JWT 인증 필터 (TokenAuthenticationFilter)
+ * - 모든 요청(Request)에 대해 JWT 토큰을 검사
+ * - 유효한 토큰이면 인증(Authentication) 객체를 SecurityContext에 저장
+ */
+@Component // Spring의 Bean으로 등록 (자동 관리)
+@RequiredArgsConstructor // final 필드를 포함한 생성자를 자동 생성
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
-    private final TokenProvider tokenProvider;
-    private final static String HEADER_AUTHORIZATION = "Authorization";
-    private final static String TOKEN_PREFIX = "Bearer ";
+    private final TokenProvider tokenProvider; // JWT 토큰을 관리하는 Provider
+    private final static String HEADER_AUTHORIZATION = "Authorization"; // 헤더 이름
+    private final static String TOKEN_PREFIX = "Bearer "; // JWT 토큰 접두사 (Bearer 사용)
 
+    /**
+     * ✅ 요청이 들어올 때마다 실행되는 필터
+     * @param request - HTTP 요청 객체
+     * @param response - HTTP 응답 객체
+     * @param filterChain - 필터 체인 (다음 필터 호출)
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
+        // 1️⃣ 요청 헤더에서 JWT 토큰 추출
         String token = resolveToken(request);
+
+        // 2️⃣ 토큰이 유효한 경우, SecurityContext에 인증 정보 저장
         if (token != null && tokenProvider.validToken(token) == 1) {
-            // 토큰이 유효할 경우, 인증 정보를 설정
             Authentication authentication = tokenProvider.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
+            // 3️⃣ 토큰에서 사용자 정보를 가져와 request 객체에 저장
             Member member = tokenProvider.getTokenDetails(token);
             request.setAttribute("member", member);
-        } else if (token != null && tokenProvider.validToken(token) == 2) {
+        }
+        // 4️⃣ 토큰이 만료된 경우, HTTP 상태 코드 401 (Unauthorized) 반환
+        else if (token != null && tokenProvider.validToken(token) == 2) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return; // 더 이상 진행하지 않음
+            return; // 요청을 더 이상 진행하지 않음
         }
 
+        // 5️⃣ 다음 필터로 요청을 전달
         filterChain.doFilter(request, response);
     }
 
+    /**
+     * ✅ HTTP 요청 헤더에서 JWT 토큰을 추출하는 메서드
+     * @param request - HTTP 요청 객체
+     * @return JWT 토큰 (Bearer 제거 후 반환) 또는 null
+     */
     private String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader(HEADER_AUTHORIZATION);
 
+        // 헤더가 존재하고, "Bearer "로 시작하면 토큰 값만 반환
         if (bearerToken != null && bearerToken.startsWith(TOKEN_PREFIX)) {
-            return bearerToken.substring(TOKEN_PREFIX.length());
+            return bearerToken.substring(TOKEN_PREFIX.length()); // "Bearer " 이후의 값만 추출
         }
 
-        return null;
+        return null; // 토큰이 없으면 null 반환
     }
 }

@@ -15,12 +15,22 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
-@Configuration
-@RequiredArgsConstructor
+/**
+ * ✅ Spring Security 설정 클래스 (WebSecurityConfig)
+ * - JWT 기반 인증을 사용하도록 설정
+ * - 특정 API 엔드포인트는 인증 없이 접근 가능
+ * - 세션을 사용하지 않고 STATELESS 방식 적용
+ */
+@Configuration // Spring Security 설정 클래스임을 명시
+@RequiredArgsConstructor // final 필드에 대한 생성자 자동 생성 (Lombok)
 public class WebSecurityConfig {
 
-    private final TokenAuthenticationFilter tokenAuthenticationFilter;
+    private final TokenAuthenticationFilter tokenAuthenticationFilter; // JWT 인증 필터
 
+    /**
+     * ✅ 정적 리소스 (CSS, JS) 요청을 보안 필터에서 제외
+     * - 보안 검사를 하지 않도록 설정
+     */
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring()
@@ -28,44 +38,54 @@ public class WebSecurityConfig {
                         "/static/**",
                         "/css/**",
                         "/js/**"
-                ); // 정적 리소스 경로 무시
+                ); // 정적 리소스 요청은 필터링 제외
     }
 
+    /**
+     * ✅ Spring Security의 보안 정책을 설정하는 메서드
+     * - JWT 인증 필터를 추가하여 모든 요청에 대해 인증 적용
+     * - 특정 경로는 인증 없이 접근 가능하도록 설정
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable) // CSRF(Cross-Site Request Forgery) 보호 기능 비활성화
                 .sessionManagement(
                         session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
+                ) // 세션을 사용하지 않고, STATELESS 방식 적용
                 .authorizeHttpRequests(
                         auth -> auth
                                 .requestMatchers(
-                                        new AntPathRequestMatcher("/", "GET"),
-                                        new AntPathRequestMatcher("/member/join", "GET"),
-                                        new AntPathRequestMatcher("/member/login", "GET"),
-                                        new AntPathRequestMatcher("/write", "GET"),
-                                        new AntPathRequestMatcher("/join", "POST"),
-                                        new AntPathRequestMatcher("/login", "POST"),
-                                        new AntPathRequestMatcher("/logout", "POST")
-                                ).permitAll()
-                                .anyRequest().authenticated()
+                                        new AntPathRequestMatcher("/", "GET"), // 메인 페이지
+                                        new AntPathRequestMatcher("/member/join", "GET"), // 회원가입 페이지
+                                        new AntPathRequestMatcher("/member/login", "GET"), // 로그인 페이지
+                                        new AntPathRequestMatcher("/write", "GET"), // 글쓰기 페이지
+                                        new AntPathRequestMatcher("/join", "POST"), // 회원가입 요청
+                                        new AntPathRequestMatcher("/login", "POST"), // 로그인 요청
+                                        new AntPathRequestMatcher("/logout", "POST") // 로그아웃 요청
+                                ).permitAll() // 위의 경로들은 인증 없이 접근 가능
+                                .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
                 )
-                .logout(AbstractHttpConfigurer::disable)
-                // JWT 필터 추가
-                .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-        ;
+                .logout(AbstractHttpConfigurer::disable) // 로그아웃 기능 비활성화 (JWT 기반 인증에서는 필요 없음)
+                .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // JWT 필터 추가
         return http.build();
     }
 
+    /**
+     * ✅ AuthenticationManager 빈 생성
+     * - Spring Security의 인증을 관리하는 객체
+     */
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
 
+    /**
+     * ✅ 비밀번호 암호화를 위한 BCryptPasswordEncoder 빈 생성
+     * - 회원가입 시 비밀번호를 암호화하여 저장
+     */
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 }

@@ -1,8 +1,7 @@
 $(document).ready(() => {
 
     $('#signup').click((event) => {
-        // 폼의 기본 제출 동작을 막음 (페이지 새로고침 방지)
-        event.preventDefault();
+        event.preventDefault(); // 폼 기본 제출 동작을 막음 (페이지 새로고침 방지)
 
         // 입력된 회원 가입 정보를 가져옴
         let userId = $('#user_id').val();
@@ -16,14 +15,14 @@ $(document).ready(() => {
             password : password,
             userName : userName,
             role : role
-        }
+        };
 
         console.log('formData :: ', formData); // 콘솔에 데이터 출력 (디버깅용)
 
         // AJAX 요청 실행 (회원가입 API 호출)
         $.ajax({
             type: 'POST', // HTTP 요청 방식 (POST)
-            url: '/join', // 회원가입 API 엔드포인트
+            url: '/join', // 백엔드 회원가입 API 엔드포인트
             data: JSON.stringify(formData), // 데이터를 JSON 형식으로 변환하여 전송
             contentType: 'application/json; charset=utf-8', // HTTP 요청의 콘텐츠 타입 설정
             dataType: 'json', // 서버에서 반환할 데이터 타입 (JSON)
