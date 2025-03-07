@@ -1,12 +1,33 @@
-/**
- * 사용자 로그인 상태를 확인하는 함수.
- * - Local Storage에 저장된 액세스 토큰이 없으면 로그인 페이지로 리디렉션.
- */
 let checkToken = () => {
-    let token = localStorage.getItem('accessToken'); // Local Storage에서 JWT 토큰 가져오기
-
-    // 토큰이 없거나 공백이면 로그인 페이지로 이동
+    let token = localStorage.getItem('accessToken');
     if (token == null || token.trim() === '') {
-        window.location.href = '/member/login'; // 로그인 페이지로 리디렉션
+        window.location.href = '/member/login';
     }
-};
+}
+
+let setupAjax = () => {
+    // 모든 Ajax 요청에 JWT Access Token을 포함.
+    $.ajaxSetup({
+        beforeSend: (xhr) => {
+            let token = localStorage.getItem('accessToken');
+            if (token) {
+                xhr.setRequestHeader('Authorization', 'Bearer ' + token)
+            }
+        }
+    })
+}
+
+let getUserInfo = () => {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            type: 'GET',
+            url: '/user/info',
+            success: (response) => {
+                resolve(response);
+            },
+            error: (xhr) => {
+                reject(xhr);
+            }
+        })
+    });
+}
