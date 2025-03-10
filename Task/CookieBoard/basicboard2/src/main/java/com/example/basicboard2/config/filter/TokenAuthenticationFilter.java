@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -19,6 +20,7 @@ import java.io.IOException;
  * - 모든 요청(Request)에 대해 JWT 토큰을 검사
  * - 유효한 토큰이면 인증(Authentication) 객체를 SecurityContext에 저장
  */
+@Slf4j
 @Component // Spring의 Bean으로 등록 (자동 관리)
 @RequiredArgsConstructor // final 필드를 포함한 생성자를 자동 생성
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
@@ -35,6 +37,13 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
      */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+
+        String requestURI = request.getRequestURI();
+        log.info("Request URI: {}", requestURI);
+        if ( "/refresh-token".equals(requestURI) ) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         // 1️⃣ 요청 헤더에서 JWT 토큰 추출
         String token = resolveToken(request);

@@ -4,6 +4,7 @@ import com.example.basicboard2.config.filter.TokenAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,6 +15,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
 
 /**
  * ✅ Spring Security 설정 클래스 (WebSecurityConfig)
@@ -56,13 +60,15 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(
                         auth -> auth
                                 .requestMatchers(
-                                        new AntPathRequestMatcher("/", "GET"), // 메인 페이지
-                                        new AntPathRequestMatcher("/member/join", "GET"), // 회원가입 페이지
-                                        new AntPathRequestMatcher("/member/login", "GET"), // 로그인 페이지
-                                        new AntPathRequestMatcher("/write", "GET"), // 글쓰기 페이지
-                                        new AntPathRequestMatcher("/join", "POST"), // 회원가입 요청
-                                        new AntPathRequestMatcher("/login", "POST"), // 로그인 요청
-                                        new AntPathRequestMatcher("/logout", "POST") // 로그아웃 요청
+                                        new AntPathRequestMatcher("/", GET.name()), // 메인 페이지
+                                        new AntPathRequestMatcher("/member/join", GET.name()), // 회원가입 페이지
+                                        new AntPathRequestMatcher("/member/login", GET.name()), // 로그인 페이지
+                                        new AntPathRequestMatcher("/write", GET.name()), // 글쓰기 페이지
+
+                                        new AntPathRequestMatcher("/refresh-token", POST.name()),
+                                        new AntPathRequestMatcher("/join", POST.name()), // 회원가입 요청
+                                        new AntPathRequestMatcher("/login", POST.name()), // 로그인 요청
+                                        new AntPathRequestMatcher("/logout", POST.name()) // 로그아웃 요청
                                 ).permitAll() // 위의 경로들은 인증 없이 접근 가능
                                 .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
                 )
