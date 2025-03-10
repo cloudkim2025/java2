@@ -36,16 +36,31 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
      * @param filterChain - 필터 체인 (다음 필터 호출)
      */
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
 
+        // 현재 요청의 URI(경로)를 가져옴
+        // 예를 들어, 사용자가 "/api/users"에 접근하면 requestURI 값은 "/api/users"가 됨
         String requestURI = request.getRequestURI();
+
+        // 요청된 URI를 로그에 출력하여 추적 가능하게 함
         log.info("Request URI: {}", requestURI);
-        if ( "/refresh-token".equals(requestURI) ) {
+
+        // 요청 URI가 "/refresh-token"인지 확인 (JWT 토큰을 갱신하는 API 엔드포인트)
+        if ("/refresh-token".equals(requestURI)) {
+
+            // "/refresh-token" 요청이 들어온 경우, 필터를 적용하지 않고 다음 필터 또는 컨트롤러로 바로 전달
             filterChain.doFilter(request, response);
+
+            // 이후의 필터 로직을 수행하지 않고 메서드 실행 종료
             return;
         }
 
-        // 1️⃣ 요청 헤더에서 JWT 토큰 추출
+        // (추가적인 필터링 로직이 여기에 들어갈 수 있음)
+        // }
+
+
+    // 1️⃣ 요청 헤더에서 JWT 토큰 추출
         String token = resolveToken(request);
 
         // 2️⃣ 토큰이 유효한 경우, SecurityContext에 인증 정보 저장

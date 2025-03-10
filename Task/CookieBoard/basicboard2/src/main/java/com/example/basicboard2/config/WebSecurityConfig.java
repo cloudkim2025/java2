@@ -7,12 +7,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -27,6 +30,7 @@ import static org.springframework.http.HttpMethod.POST;
  */
 @Configuration // Spring Security 설정 클래스임을 명시
 @RequiredArgsConstructor // final 필드에 대한 생성자 자동 생성 (Lombok)
+@EnableMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig {
 
     private final TokenAuthenticationFilter tokenAuthenticationFilter; // JWT 인증 필터
@@ -59,21 +63,31 @@ public class WebSecurityConfig {
                 ) // 세션을 사용하지 않고, STATELESS 방식 적용
                 .authorizeHttpRequests(
                         auth -> auth
+                                //                                .requestMatchers("/api/board/**").hasRole("ADMIN")
                                 .requestMatchers(
                                         new AntPathRequestMatcher("/", GET.name()), // 메인 페이지
                                         new AntPathRequestMatcher("/member/join", GET.name()), // 회원가입 페이지
                                         new AntPathRequestMatcher("/member/login", GET.name()), // 로그인 페이지
                                         new AntPathRequestMatcher("/write", GET.name()), // 글쓰기 페이지
+                                        new AntPathRequestMatcher("/detail", GET.name()),
+                                        new AntPathRequestMatcher("/access-denied", GET.name()),
 
                                         new AntPathRequestMatcher("/refresh-token", POST.name()),
                                         new AntPathRequestMatcher("/join", POST.name()), // 회원가입 요청
                                         new AntPathRequestMatcher("/login", POST.name()), // 로그인 요청
-                                        new AntPathRequestMatcher("/logout", POST.name()) // 로그아웃 요청
+                                        new AntPathRequestMatcher("/logout", POST.name()), // 로그아웃 요청
+                                        new AntPathRequestMatcher("/logout", POST.name()),
+                                        new AntPathRequestMatcher("/api/board/file/download/*", GET.name())
                                 ).permitAll() // 위의 경로들은 인증 없이 접근 가능
                                 .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
                 )
                 .logout(AbstractHttpConfigurer::disable) // 로그아웃 기능 비활성화 (JWT 기반 인증에서는 필요 없음)
-                .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class); // JWT 필터 추가
+                .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // JWT 필터 추가
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(authenticationEntryPoint())
+                        .accessDeniedHandler(accessDeniedHandler())
+        )
+        ;
         return http.build();
     }
 
@@ -93,5 +107,18 @@ public class WebSecurityConfig {
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        return (request, response, accessDeniedException) -> {
+            response.sendRedirect("/access-denied");
+        };
+    }
+
+    @Bean
+    public AuthenticationEntryPoint authenticationEntryPoint() {
+        return (request, response, accessDeniedException) -> {
+            response.sendRedirect("/access-denied");
+        };
     }
 }

@@ -4,6 +4,7 @@ import com.example.basicboard2.mapper.BoardMapper;
 import com.example.basicboard2.model.Article;
 import com.example.basicboard2.model.Paging;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -67,5 +68,14 @@ public class BoardService {
      */
     public int getTotalArticleCnt() {
         return boardMapper.getArticleCnt();
+    }
+
+
+    public Article getBoardDetail(long id) {
+        return boardMapper.getArticleById(id);
+    }
+
+    public Resource downloadFile(String fileName) {
+        return fileService.downloadFile(fileName);
     }
 }

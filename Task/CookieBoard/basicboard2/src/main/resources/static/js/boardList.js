@@ -89,7 +89,7 @@ let loadBoard = (page, size) => {
         error: (error) => {
             console.error('board list error :: ', error);
         }
-    })
+    });
 }
 
 /**

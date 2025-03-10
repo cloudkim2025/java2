@@ -31,4 +31,6 @@ public interface BoardMapper {
      * @return 총 게시글 개수
      */
     int getArticleCnt();
+
+    Article getArticleById(long id);
 }

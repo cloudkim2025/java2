@@ -1,5 +1,6 @@
 package com.example.basicboard2.model;
 
+import com.example.basicboard2.dto.BoardDetailResponseDTO;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -19,4 +20,14 @@ public class Article {
     private String filePath; // 첨부 파일 경로
     private LocalDateTime created; // 생성일
     private LocalDateTime updated; // 수정일
+
+    public BoardDetailResponseDTO toBoardDetailResponseDTO() {
+        return BoardDetailResponseDTO.builder()
+                .title(title)
+                .content(content)
+                .userId(userId)
+                .filePath(filePath)
+                .created(created)
+                .build();
+    }
 }

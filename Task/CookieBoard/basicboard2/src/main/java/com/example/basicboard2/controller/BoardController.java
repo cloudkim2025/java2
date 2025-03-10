@@ -1,7 +1,9 @@
 package com.example.basicboard2.controller;
 
+import org.springframework.ui.Model;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * ✅ 게시판 관련 화면을 처리하는 컨트롤러.
@@ -28,5 +30,11 @@ public class BoardController {
     @GetMapping("/write")
     public String boardWrite() {
         return "board-write"; // `resources/templates/board-write.html` 반환
+    }
+
+    @GetMapping("/detail")
+    public String detail(@RequestParam("id") Long id, Model model) {
+        model.addAttribute("id", id);
+        return "board-detail";
     }
 }

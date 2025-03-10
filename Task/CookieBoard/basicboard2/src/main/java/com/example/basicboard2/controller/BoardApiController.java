@@ -1,12 +1,21 @@
 package com.example.basicboard2.controller;
 
+import com.example.basicboard2.dto.BoardDetailResponseDTO;
 import com.example.basicboard2.dto.BoardListResponseDTO;
 import com.example.basicboard2.model.Article;
 import com.example.basicboard2.service.BoardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 /**
@@ -26,6 +35,7 @@ public class BoardApiController {
      * @param size 페이지당 게시글 개수 (기본값: 10)
      * @return 게시글 목록과 마지막 페이지 여부
      */
+    //    @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping
     public BoardListResponseDTO getBoards(
             @RequestParam(name = "page", defaultValue = "1") int page,
@@ -45,6 +55,13 @@ public class BoardApiController {
                 .build();
     }
 
+    @GetMapping("/{id}")
+    public BoardDetailResponseDTO getBoardDetail(@PathVariable long id) {
+        return boardService
+                .getBoardDetail(id)
+                .toBoardDetailResponseDTO();
+    }
+
     /**
      * ✅ 게시글 저장 API.
      * - 파일 업로드 포함.
@@ -61,5 +78,18 @@ public class BoardApiController {
             @RequestParam("file") MultipartFile file
     ) {
         boardService.saveArticle(userId, title, content, file);
+    }
+
+    @GetMapping("/file/download/{fileName}")
+    public ResponseEntity<Resource> downloadFile(@PathVariable String fileName) {
+        Resource resource = boardService.downloadFile(fileName);
+
+        // 한글 파일명을 URL 인코딩
+        String encoded = URLEncoder.encode(resource.getFilename(), StandardCharsets.UTF_8);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename*=UTF-8''" + encoded)
+                .body(resource);
     }
 }
