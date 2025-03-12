@@ -1,5 +1,6 @@
 package com.example.basicboard2.controller;
 
+import com.example.basicboard2.dto.BoardDeleteRequestDTO;
 import com.example.basicboard2.dto.BoardDetailResponseDTO;
 import com.example.basicboard2.dto.BoardListResponseDTO;
 import com.example.basicboard2.model.Article;
@@ -9,7 +10,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -104,5 +104,9 @@ public class BoardApiController {
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename*=UTF-8''" + encoded)
                 .body(resource);
+    }
+    @DeleteMapping("/{id}")
+    public void deleteArticle(@PathVariable long id, @RequestBody BoardDeleteRequestDTO requestDTO) {
+        boardService.deleteBoardById(id, requestDTO);
     }
 }

@@ -67,5 +67,9 @@
             id = #{id};
     </select>
 
+    <delete id="deleteBoardById" parameterType="Long">
+        DELETE FROM article
+        WHERE id = #{id};
+    </delete>
 
 </mapper>
