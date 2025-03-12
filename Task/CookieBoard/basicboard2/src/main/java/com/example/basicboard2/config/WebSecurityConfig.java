@@ -70,6 +70,7 @@ public class WebSecurityConfig {
                                         new AntPathRequestMatcher("/member/login", GET.name()), // 로그인 페이지
                                         new AntPathRequestMatcher("/write", GET.name()), // 글쓰기 페이지
                                         new AntPathRequestMatcher("/detail", GET.name()),
+                                        new AntPathRequestMatcher("/update/*", GET.name()),
                                         new AntPathRequestMatcher("/access-denied", GET.name()),
 
                                         new AntPathRequestMatcher("/refresh-token", POST.name()),

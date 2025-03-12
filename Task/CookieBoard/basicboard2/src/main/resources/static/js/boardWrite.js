@@ -26,7 +26,7 @@ $(document).ready(() => {
 
         let formData = new FormData($('#writeForm')[0]); // 폼 데이터 객체 생성
 
-        // 기존 주석 유지 ✅
+        // 기존 주석 유지
         // for (let [key, value] of formData.entries()) {
         //     if (value instanceof File) {
         //         console.log('Key:', key);
