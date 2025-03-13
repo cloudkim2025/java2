@@ -21,6 +21,7 @@ public class Article {
     private LocalDateTime created; // 생성일
     private LocalDateTime updated; // 수정일
 
+
     public BoardDetailResponseDTO toBoardDetailResponseDTO() {
         return BoardDetailResponseDTO.builder()
                 .title(title)

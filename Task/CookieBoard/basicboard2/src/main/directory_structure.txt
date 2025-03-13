@@ -1,0 +1,100 @@
+폴더 PATH의 목록입니다.
+볼륨 일련 번호는 709E-0ED0입니다.
+C:.
+|   directory_structure.txt
+|   
++---java
+|   \---com
+|       \---example
+|           \---basicboard2
+|               |   Basicboard2Application.java
+|               |   
+|               +---config
+|               |   |   WebSecurityConfig.java
+|               |   |   
+|               |   +---filter
+|               |   |       TokenAuthenticationFilter.java
+|               |   |       
+|               |   +---jwt
+|               |   |       JwtProperties.java
+|               |   |       TokenProvider.java
+|               |   |       
+|               |   \---security
+|               |           CustomUserDetails.java
+|               |           
+|               +---controller
+|               |       BoardApiController.java
+|               |       BoardController.java
+|               |       ErrorController.java
+|               |       MemberApiController.java
+|               |       MemberController.java
+|               |       TokenApiController.java
+|               |       
+|               +---dto
+|               |       BoardDeleteRequestDTO.java
+|               |       BoardDetailResponseDTO.java
+|               |       BoardListResponseDTO.java
+|               |       RefreshTokenResponseDTO.java
+|               |       SignInRequestDTO.java
+|               |       SignInResponseDTO.java
+|               |       SignUpRequestDTO.java
+|               |       SignUpResponseDTO.java
+|               |       UserInfoResponseDTO.java
+|               |       
+|               +---mapper
+|               |       BoardMapper.java
+|               |       MemberMapper.java
+|               |       
+|               +---model
+|               |       Article.java
+|               |       Member.java
+|               |       Paging.java
+|               |       
+|               +---service
+|               |       BoardService.java
+|               |       FileService.java
+|               |       MemberService.java
+|               |       TokenApiService.java
+|               |       UserDetailService.java
+|               |       
+|               +---type
+|               |       Role.java
+|               |       
+|               \---util
+|                       CookieUtil.java
+|                       
+\---resources
+    |   application.yml
+    |   data.sql
+    |   
+    +---mappers
+    |       ArticleMapper.xml
+    |       MemberMapper.xml
+    |       
+    +---static
+    |   +---css
+    |   |       board.css
+    |   |       boardDetail.css
+    |   |       boardUpdate.css
+    |   |       boardWrite.css
+    |   |       signIn.css
+    |   |       signUp.css
+    |   |       
+    |   \---js
+    |           boardDetail.js
+    |           boardList.js
+    |           boardUpdate.js
+    |           boardWrite.js
+    |           common.js
+    |           signIn.js
+    |           signUp.js
+    |           
+    \---templates
+            access-denied.html
+            board-detail.html
+            board-list.html
+            board-update.html
+            board-write.html
+            sign-in.html
+            sign-up.html
+            

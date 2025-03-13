@@ -61,9 +61,8 @@ public class WebSecurityConfig {
                 .sessionManagement(
                         session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 ) // 세션을 사용하지 않고, STATELESS 방식 적용
-                .authorizeHttpRequests(
-                        auth -> auth
-                                //                                .requestMatchers("/api/board/**").hasRole("ADMIN")
+                .authorizeHttpRequests(auth -> auth
+                               .requestMatchers("/favicon.ico").permitAll()
                                 .requestMatchers(
                                         new AntPathRequestMatcher("/", GET.name()), // 메인 페이지
                                         new AntPathRequestMatcher("/member/join", GET.name()), // 회원가입 페이지
